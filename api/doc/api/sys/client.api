@@ -1,0 +1,89 @@
+syntax = "v1"
+
+info(
+    title: "客户端"
+    desc: "客户端"
+    author: "Blizzard"
+    email: "parezhang@126.com"
+)
+
+
+type (
+    AddClientReq {
+        ClientId string `json:"clientId"`
+        ClientSecret string `json:"clientSecret"`
+        Scope string `json:"scope"`
+    }
+    AddClientResp {
+        Code string `json:"code"`
+        Message string `json:"message"`
+    }
+
+    DeleteClientrReq {
+        Ids []int64 `json:"ids"`
+    }
+    DeleteClientResp {
+        Code string `json:"code"`
+        Message string `json:"message"`
+    }
+
+    DetailReq {
+        Id uint64 `form:"id" validate:"number"`
+    }
+    DetailResp {
+        Id int64 `json:"id"`
+        ClientId string `json:"clientId"`
+        ClientSecret string `json:"clientSecret"`
+        Scope string `json:"scope"`
+        IsDeleted string `json:"isDeleted"`
+    }
+
+    ListClientReq {
+        Current  int64  `json:"current,default=1"`
+        PageSize int64  `json:"pageSize,default=20"`
+        ClientId     string `json:"clientId,optional"`
+    }
+
+//    ListClientData {
+//        Id int64 `json:"id"`
+//        ClientId string `json:"clientId"`
+//        ClientSecret string `json:"clientSecret"`
+//        Scope string `json:"scope"`
+//        IsDeleted string `json:"isDeleted"`
+//    }
+    ListClientResp {
+        Code     string          `json:"code"`
+        Message  string          `json:"message"`
+        Current  int64           `json:"current,default=1"`
+        Data     []*DetailResp `json:"data"`
+        PageSize int64           `json:"pageSize,default=20"`
+        Success  bool            `json:"success"`
+        Total    int64           `json:"total"`
+    }
+)
+
+
+@server(
+    jwt: Auth
+    middleware: CheckUrl
+    group:      sys/client
+    prefix:     /api/sys/client
+)
+service gateway-api {
+    //添加client
+    @handler CreateClient
+    post /add (AddClientReq) returns (AddClientResp)
+
+    //删除client
+    @handler ClientDelete
+    post /delete (DeleteClientrReq) returns (DeleteClientResp)
+    //todo 修改client
+
+    //通过ID获取client
+    @handler GetClientById
+    get /detail (DetailReq) returns (DetailResp)
+
+    //列表
+    @handler ClientList
+    post /list (ListClientReq) returns (ListClientResp)
+}

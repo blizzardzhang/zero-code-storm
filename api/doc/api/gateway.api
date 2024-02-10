@@ -1,0 +1,10 @@
+import "user/user.api"
+import "sys/client.api"
+
+info (
+	title:  "网关"
+	desc:   "网关服务"
+	author: "Blizzard"
+	email:  "parezhang@126.com"
+)
+
